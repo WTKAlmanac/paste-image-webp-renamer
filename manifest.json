@@ -1,0 +1,10 @@
+{
+  "id": "paste-image-webp-renamer",
+  "name": "Paste Image WebP Renamer",
+  "version": "1.0.0",
+  "minAppVersion": "1.5.0",
+  "description": "Convert pasted images to WebP, rename them from the current note path plus CRC32, and resize files larger than 1MB.",
+  "author": "WTKAlmanac",
+  "authorUrl": "https://github.com/WTKAlmanac",
+  "isDesktopOnly": true
+}
