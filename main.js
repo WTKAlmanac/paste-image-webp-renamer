@@ -1,6 +1,6 @@
 "use strict";
 
-const { ButtonComponent, Modal, Notice, Plugin, normalizePath } = require("obsidian");
+const { ButtonComponent, Modal, Notice, Plugin, TFile, normalizePath } = require("obsidian");
 
 const MAX_IMAGE_SIZE_BYTES = 1024 * 1024;
 const WEBP_QUALITY = 0.92;
@@ -69,14 +69,24 @@ module.exports = class PasteImageWebpRenamerPlugin extends Plugin {
 		const preferredFileName = `${noteStem}-${crcHex}.webp`;
 		const targetPath = await resolveAttachmentFilePath(this.app.fileManager, preferredFileName, notePath);
 		const existingFile = this.app.vault.getAbstractFileByPath(targetPath);
-		if (existingFile) {
-			return `![[${targetPath}]]`;
+		if (existingFile instanceof TFile) {
+			return this.buildImageEmbed(existingFile, notePath);
 		}
 
 		await ensureParentFolderExists(this.app.vault, targetPath);
-		await this.app.vault.createBinary(targetPath, webpBuffer);
+		const createdFile = await this.app.vault.createBinary(targetPath, webpBuffer);
 
-		return `![[${targetPath}]]`;
+		return this.buildImageEmbed(createdFile, notePath);
+	}
+
+	buildImageEmbed(file, notePath) {
+		const useMarkdownLinks =
+			typeof this.app.vault.getConfig === "function" && this.app.vault.getConfig("useMarkdownLinks");
+		if (useMarkdownLinks && typeof this.app.fileManager.generateMarkdownLink === "function") {
+			return `!${this.app.fileManager.generateMarkdownLink(file, notePath)}`;
+		}
+
+		return `![[${file.path}]]`;
 	}
 };
 
