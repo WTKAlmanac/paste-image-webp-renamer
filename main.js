@@ -55,7 +55,7 @@ module.exports = class PasteImageWebpRenamerPlugin extends Plugin {
 
 	async handlePastedImage(imageFile, notePath) {
 		let webpBlob = await convertBlobToWebp(imageFile, WEBP_QUALITY, 100);
-		if (webpBlob.size > MAX_IMAGE_SIZE_BYTES) {
+		if (webpBlob.size > MAX_IMAGE_SIZE_BYTES / 2) {
 			webpBlob = await promptForCompressedImage(this.app, imageFile, webpBlob.size);
 		}
 
